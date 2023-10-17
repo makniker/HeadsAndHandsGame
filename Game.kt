@@ -1,65 +1,66 @@
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*
 
-public class Game {
-
-
-    private Hero chooseClassForHero() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose your hero class:");
-        System.out.println("1. Warrior");
-        System.out.println("2. Mage");
-        System.out.println("3. Rogue");
+class Game {
+    private fun chooseClassForHero(): Hero {
+        println("Choose your hero class:")
+        println("1. Warrior")
+        println("2. Mage")
+        println("3. Rogue")
         while (true) {
             try {
-                int heroChoice = scanner.nextInt();
-                switch (heroChoice) {
-                    case 1 -> {
-                        return new Hero("Warrior", 20, 20, 120, 10, 30);
+                val heroChoice = readln().toInt()
+                when (heroChoice) {
+                    1 -> {
+                        return Hero("Warrior", 20, 20, 120, 10, 30)
                     }
-                    case 2 -> {
-                        return new Hero("Mage", 20, 20, 100, 5, 50);
+
+                    2 -> {
+                        return Hero("Mage", 20, 20, 100, 5, 50)
                     }
-                    case 3 -> {
-                        return new Hero("Rogue", 25, 15, 100, 10, 14);
+
+                    3 -> {
+                        return Hero("Rogue", 25, 15, 100, 10, 14)
                     }
-                    default -> System.out.println("Invalid choice.");
+
+                    else -> println("Invalid choice.")
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Type a number!");
+            } catch (e: InputMismatchException) {
+                println("Type a number!")
             }
         }
     }
-    public void start() {
-        Hero hero = chooseClassForHero();
-        System.out.println("You made your choice...\nDark dungeon beckons you with its treasures...");
-        Level level = new Level();
-        Scanner scanner = new Scanner(System.in);
-        while (hero.isAlive() && !level.isLevelFinished()) {
+
+    fun start() {
+        val hero = chooseClassForHero()
+        println("You made your choice...\nDark dungeon beckons you with its treasures...")
+        val level = Level()
+        while (hero.isAlive && !level.isLevelFinished) {
             try {
-                hero.printStats();
-                System.out.println("Choose your action");
-                System.out.println("1. Bravely step into next room");
-                System.out.println("2. Ask Gods for help");
-                System.out.println("3. Leave this place");
-                int action = scanner.nextInt();
-                switch (action) {
-                    case 1 -> level.stepIntoRandomFight(hero);
-                    case 2 -> {
+                hero.printStats()
+                println("Choose your action")
+                println("1. Bravely step into next room")
+                println("2. Ask Gods for help")
+                println("3. Leave this place")
+                val action = readln().toInt()
+                when (action) {
+                    1 -> level.stepIntoRandomFight(hero)
+                    2 -> {
                         if (hero.heal()) {
-                            System.out.println("You were healed with ancient magic");
+                            println("You were healed with ancient magic")
                         } else {
-                            System.out.println("Nothing happens...");
+                            println("Nothing happens...")
                         }
                     }
-                    case 3 -> {
-                        System.out.println("You finished your journey in this Dungeon.");
-                        level.finish();
+
+                    3 -> {
+                        println("You finished your journey in this Dungeon.")
+                        level.finish()
                     }
-                    default -> System.out.println("Enter right command, please");
+
+                    else -> println("Enter right command, please")
                 }
-            } catch (Exception e) {
-                System.out.println("Enter right command, please");
+            } catch (e: Exception) {
+                println("Enter right command, please")
             }
         }
     }

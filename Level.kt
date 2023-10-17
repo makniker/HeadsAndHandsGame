@@ -1,42 +1,41 @@
-import java.util.ArrayList;
-import java.util.Random;
 
-public class Level {
-    private final static int MAX_MONSTERS_COUNT = 10;
-    private final static Random random = new Random();
-    private final ArrayList<Monster> monstersInLevel;
+class Level {
+    private val monstersInLevel: ArrayList<Monster>
 
-    public Level() {
-        int numOfMonster = random.nextInt(1, MAX_MONSTERS_COUNT);
-        monstersInLevel = new ArrayList<>(numOfMonster);
-        for (int i = 0; i < numOfMonster; i++) {
-            int minDamage = random.nextInt(1,20);
-            monstersInLevel.add(new Monster("Skeleton", random.nextInt(1, 30), random.nextInt(1, 30), random.nextInt(1, 100), minDamage, minDamage + random.nextInt(1, 10)));
+    init {
+        val numOfMonster = (1 ..MAX_MONSTERS_COUNT).random()
+        monstersInLevel = ArrayList(numOfMonster)
+        for (i in 0 until numOfMonster) {
+            val minDamage = (1 ..20).random()
+            monstersInLevel.add(Monster("Skeleton", (1 ..30).random(), (1 ..30).random(), (1 ..100).random(), minDamage, minDamage + (1 ..10).random()))
         }
     }
 
-    public void stepIntoRandomFight(Hero hero) {
-        if (monstersInLevel.isEmpty() || !hero.isAlive()) {
-            return;
+    fun stepIntoRandomFight(hero: Hero) {
+        if (monstersInLevel.isEmpty() || !hero.isAlive) {
+            return
         }
-        int randomIndex = random.nextInt(monstersInLevel.size());
-        Monster currentEnemy = monstersInLevel.remove(randomIndex);
-        if (hero.getAttack() - currentEnemy.getDefence() <= 0) {
-            System.out.println("The last thing you hear before you die is the terrible roar of a monster.\nThis fight was too hard for you");
-            return;
+        val randomIndex = (1..monstersInLevel.size).random()
+        val currentEnemy = monstersInLevel.removeAt(randomIndex)
+        if (hero.attack - currentEnemy.defence <= 0) {
+            println("The last thing you hear before you die is the terrible roar of a monster.\nThis fight was too hard for you")
+            return
         }
-        while (currentEnemy.isAlive() && hero.isAlive()) {
-            hero.hit(currentEnemy);
-            currentEnemy.hit(hero);
+        while (currentEnemy.isAlive && hero.isAlive) {
+            hero.hit(currentEnemy)
+            currentEnemy.hit(hero)
         }
-        System.out.println(hero.isAlive() ? "You won a battle" : "The last thing you hear before you die is the terrible roar of a monster.");
+        println(if (hero.isAlive) "You won a battle" else "The last thing you hear before you die is the terrible roar of a monster.")
     }
 
-    public boolean isLevelFinished() {
-        return monstersInLevel.isEmpty();
-    }
-    public void finish() {
-        monstersInLevel.clear();
+    val isLevelFinished: Boolean
+        get() = monstersInLevel.isEmpty()
+
+    fun finish() {
+        monstersInLevel.clear()
     }
 
+    companion object {
+        private const val MAX_MONSTERS_COUNT = 10
+    }
 }

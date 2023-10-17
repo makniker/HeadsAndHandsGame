@@ -1,73 +1,60 @@
-import java.util.Random;
+import java.util.*
+import kotlin.math.min
 
-public abstract class Entity {
-    private final static Random random = new Random();
-    protected final String name;
-    private final int attack;
-    private final int defence;
-    private int health;
-    private final int maxHealth;
-    private final int[] damage;
+abstract class Entity(name: String, attack: Int, defence: Int, maxHealth: Int, minDamage: Int, maxDamage: Int) {
+    protected val name: String
+    val attack: Int
+    val defence: Int
+    private var health: Int
+    val maxHealth: Int
+    private val damage: IntArray
 
-    public Entity(String name, int attack, int defence, int maxHealth, int minDamage, int maxDamage) {
-        if (attack < 0 || attack > 30 || defence < 0 || defence > 30 || minDamage >= maxDamage) {
-            throw new IllegalArgumentException("Bad stats for Entity!");
+    init {
+        var minDamage = minDamage
+        require(!(attack < 0 || attack > 30 || defence < 0 || defence > 30 || minDamage >= maxDamage)) { "Bad stats for Entity!" }
+        this.name = name
+        this.attack = attack
+        this.defence = defence
+        health = maxHealth
+        this.maxHealth = maxHealth
+        damage = IntArray(maxDamage - minDamage + 1)
+        for (i in damage.indices) {
+            damage[i] = minDamage++
         }
-        this.name = name;
-        this.attack = attack;
-        this.defence = defence;
-        this.health = maxHealth;
-        this.maxHealth = maxHealth;
-        damage = new int[maxDamage - minDamage + 1];
-        for (int i = 0; i < damage.length; i++ ) {
-            damage[i] = minDamage++;
+    }
+
+    private fun takeDamage(damage: Int) {
+        require(damage >= 0) { "Bad damage value!" }
+        health = min((health - damage).toDouble(), 0.0).toInt()
+    }
+
+    fun getHealth(): Int {
+        return health
+    }
+
+    fun setHealth(newHealth: Int) {
+        require(newHealth > 0) { "Bad health value!" }
+        health = min(newHealth.toDouble(), maxHealth.toDouble()).toInt()
+    }
+
+    val isAlive: Boolean
+        get() = health > 0
+
+    fun hit(enemy: Entity) {
+        if (!enemy.isAlive) {
+            return
         }
-    }
-
-    public int getDefence() {
-        return defence;
-    }
-    public int getAttack() {
-        return attack;
-    }
-
-    public void takeDamage(int damage) {
-        if (damage < 0) {
-            throw new IllegalArgumentException("Bad damage value!");
-        }
-        health = Math.min(health - damage, 0);
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    public void setHealth(int newHealth) {
-        if (newHealth <= 0) {
-            throw new IllegalArgumentException("Bad health value!");
-        }
-        health = Math.min(newHealth, maxHealth);
-    }
-
-    public boolean isAlive() {
-        return health > 0;
-    }
-
-    public void hit(Entity enemy) {
-        if (!enemy.isAlive()) {
-            return;
-        }
-        int attackMod = this.attack - enemy.getDefence();
-        for (int i = 0; i < attackMod; i++) {
-            int diceResult = random.nextInt(1, 7);
+        val attackMod = attack - enemy.defence
+        for (i in 0 until attackMod) {
+            val diceResult = random.nextInt(1, 7)
             if (diceResult == 5 || diceResult == 6) {
-                enemy.takeDamage(damage[random.nextInt(damage.length)]);
-                break;
+                enemy.takeDamage(damage[random.nextInt(damage.size)])
+                break
             }
         }
+    }
+
+    companion object {
+        private val random = Random()
     }
 }

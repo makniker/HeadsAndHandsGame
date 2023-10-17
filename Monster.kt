@@ -1,5 +1,1 @@
-public class Monster extends Entity {
-    public Monster(String name, int attack, int defence, int maxHealth, int minDamage, int maxDamage) {
-        super(name, attack, defence, maxHealth, minDamage, maxDamage);
-    }
-}
+class Monster(name: String, attack: Int, defence: Int, maxHealth: Int, minDamage: Int, maxDamage: Int) : Entity(name, attack, defence, maxHealth, minDamage, maxDamage)
